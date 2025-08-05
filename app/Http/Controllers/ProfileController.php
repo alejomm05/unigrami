@@ -52,6 +52,7 @@ class ProfileController extends Controller
 
       public function show(User $user)
     {
+        $user->loadCount(['followers', 'follows', 'posts']);
         $postsCount     = $user->posts()->count();
         $followersCount = $user->followers()->count();
         $followingCount = $user->follows()->count();

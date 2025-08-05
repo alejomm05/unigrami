@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::create('stories', function (Blueprint $table) {
+       Schema::create('comments', function (Blueprint $table) {
     $table->id();
+    $table->foreignId('post_id')->constrained()->onDelete('cascade');
     $table->foreignId('user_id')->constrained()->onDelete('cascade');
-    $table->string('media_path');
-    $table->string('type'); // 'image' o 'video'
-    $table->text('caption')->nullable();
-    $table->integer('duration')->nullable(); // en segundos
-    $table->dateTime('expires_at'); // now()->addDay()
+    $table->string('content', 200); // Límite de 200 caracteres
     $table->timestamps();
 });
     }
@@ -28,6 +25,6 @@ Schema::create('stories', function (Blueprint $table) {
      */
     public function down(): void
     {
-        Schema::dropIfExists('stories');
+        Schema::dropIfExists('comments');
     }
 };

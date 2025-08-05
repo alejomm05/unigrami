@@ -5,15 +5,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
+use App\Models\Comment;
 use App\Models\Mention;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
+
     public function store(Request $request)
     {
         $request->validate([
@@ -32,15 +34,28 @@ class PostController extends Controller
         // Detectar menciones
         $this->parseMentions($request->caption, $post);
 
-        return back()->with('status', 'Publicación creada.');
+        return redirect()->route('dashboard')->with('status', '¡Publicación creada!');
     }
 
-    public function show($id)
+    public function show(Post $post)
     {
-        $post = Post::with(['user', 'comments.user', 'mentions.mentionedUser'])->findOrFail($id);
+        $post->load(['user', 'comments.user', 'mentions.mentionedUser']);
         return view('posts.show', compact('post'));
     }
 
+    public function destroy(Post $post)
+    {
+        // Verificar que el usuario logueado sea el dueño del post
+        if (Auth::id() !== $post->user_id) {
+            abort(403, 'No estás autorizado para eliminar esta publicación.');
+        }
+
+        $post->delete();
+
+        return back()->with('status', 'Publicación eliminada correctamente.');
+    }
+
+    // Método privado para detectar menciones
     private function parseMentions($content, $model)
     {
         if (!$content) return;

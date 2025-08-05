@@ -1,71 +1,67 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="flex flex-col space-y-4">
+@section('header')
+    Feed
+@endsection
 
-    <!-- Historias -->
-    <div class="mb-4">
-        <h2 class="text-xl font-bold mb-2">Historias</h2>
-        <div class="flex space-x-2 overflow-x-scroll no-scrollbar">
-            @foreach ($stories as $story)
-                <div
-                    class="w-20 h-20 bg-cover bg-center rounded-full"
-                    style="background-image: url('{{ asset($story->media_path) }}')">
+@section('content')
+    <!-- Historias destacadas -->
+    <div class="bg-white p-4 rounded-lg shadow flex space-x-4 overflow-x-auto mb-6">
+        @foreach ($stories as $user => $story)
+            <a href="#" class="flex flex-col items-center">
+                <div class="w-16 h-16 border-2 border-pink-500 rounded-full p-0.5">
+                    <img src="{{ asset('storage/' . $story->first()->user->profile_image) }}" alt="{{ $user }}" class="w-full h-full rounded-full object-cover">
                 </div>
-            @endforeach
-        </div>
+                <span class="text-xs mt-1">{{ $user }}</span>
+            </a>
+        @endforeach
     </div>
 
-    <!-- Feed de publicaciones -->
-    <div>
-        <h2 class="text-xl font-bold mb-2">Publicaciones</h2>
+    <!-- Botón flotante para crear publicación -->
+<div class="fixed bottom-6 right-6">
+    <a href="{{ route('posts.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-4 shadow-lg flex items-center justify-center w-12 h-12">
+        ➕
+    </a>
+</div>
 
-        @foreach ($posts as $post)
-            <div class="p-4 bg-white shadow mb-4">
-                <div class="flex items-center">
-                    <img
-                        src="{{ $post->user->profile_image }}"
-                        alt="{{ $post->user->display_name }}"
-                        class="w-10 h-10 rounded-full mr-2">
-
-                    <span class="font-bold">{{ $post->user->display_name }}</span>
+       <!-- Publicaciones -->
+    @foreach ($posts as $post)
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+            <div class="p-4 flex items-center">
+                <img src="{{ asset('storage/' . $post->user->profile_image) }}" alt="{{ $post->user->username }}" class="w-10 h-10 rounded-full mr-3">
+                <a href="{{ route('profile.show', $post->user->username) }}" class="font-bold text-sm">{{ $post->user->username }}</a>
+            </div>
+            <img src="{{ asset('storage/' . $post->image_path) }}" alt="Publicación" class="w-full">
+            @if($post->caption)
+                <div class="p-4">
+                    <p class="text-sm">
+                        <strong>{{ $post->user->username }}</strong>
+                        {!! preg_replace('/@([a-zA-Z0-9_]+)/', '<a href="/profile/$1" class="text-blue-500">@$1</a>', e($post->caption)) !!}
+                    </p>
                 </div>
-
-                <img
-                    src="{{ asset($post->image_path) }}"
-                    alt="{{ $post->caption }}"
-                    class="w-full mt-2">
-
-                <div class="mt-2">
-                    <p>{{ $post->caption }}</p>
-
-                    <div class="flex space-x-2 mt-2">
-                        <button
-                            wire:click="likePost({{ $post->id }})"
-                            class="text-gray-500 hover:text-gray-700">
-                            <!-- ícono Me gusta -->
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-5 w-5"
-                                 viewBox="0 0 20 20"
-                                 fill="currentColor">
-                                <path d="M2 10.5a2 2 0 012-2h7a2 2 0 110 4H4a2 2 0 01-2-2zm8 8a2 2 0 012 2h7a2 2 0 110-4h-1a1 1 0 00-1 1v3a1 1 0 01-1 1H8a1 1 0 01-1-1v-3a1 1 0 00-1-1z" />
-                            </svg>
-                        </button>
-
-                        <button class="text-gray-500 hover:text-gray-700">
-                            <!-- ícono Comentarios -->
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-5 w-5"
-                                 viewBox="0 0 20 20"
-                                 fill="currentColor">
-                                <path d="M2 10.5a2 2 0 012-2h7a2 2 0 110 4H4a2 2 0 01-2-2zm8 8a2 2 0 012 2h7a2 2 0 110-4h-1a1 1 0 00-1 1v3a1 1 0 01-1 1H8a1 1 0 01-1-1v-3a1 1 0 00-1-1z" />
-                            </svg>
-                        </button>
+            @endif
+            <div class="px-4 py-2">
+                <a href="{{ route('posts.show', $post) }}" class="text-sm text-gray-500">
+                    Ver comentarios ({{ $post->comments->count() }})
+                </a>
+            </div>
+        </div>
+    @endforeach
+    
+    <!-- Sugerencias -->
+    <div class="bg-white p-4 rounded-lg shadow">
+        <h3 class="font-bold mb-3">Sugerencias para ti</h3>
+        @foreach ($suggestions as $suggestedUser)
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center">
+                    <img src="{{ $suggestedUser->profile_image ? asset('storage/' . $suggestedUser->profile_image) : asset('images/default-avatar.png') }}" alt="{{ $suggestedUser->username }}" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-semibold text-sm">{{ $suggestedUser->username }}</p>
+                        <p class="text-xs text-gray-500">{{ $suggestedUser->followers_count }} seguidores</p>
                     </div>
                 </div>
+                <a href="{{ route('profile.show', $suggestedUser->username) }}" class="text-blue-500 text-xs">Ver perfil</a>
             </div>
         @endforeach
-
     </div>
-</div>
 @endsection

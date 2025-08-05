@@ -24,9 +24,9 @@ class DashboardController extends Controller
 
         // Publicaciones de usuarios seguidos
         $posts = Post::whereIn('user_id', $followingIds)
-            ->with(['user', 'comments.user', 'likes'])
-            ->latest()
-            ->paginate(10);
+        ->with(['user', 'comments.user'])
+        ->latest()
+        ->paginate(10);
 
         // Sugerencias: usuarios con más seguidores (excluyéndose a sí mismo)
         $suggestions = User::whereNotIn('id', $followingIds->merge([Auth::id()]))
