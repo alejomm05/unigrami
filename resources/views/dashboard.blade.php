@@ -1,67 +1,114 @@
 @extends('layouts.app')
 
 @section('header')
+  <h2 class="text-2xl font-light text-black">
     Feed
+  </h2>
 @endsection
 
 @section('content')
-    <!-- Historias destacadas -->
-    <div class="bg-white p-4 rounded-lg shadow flex space-x-4 overflow-x-auto mb-6">
-        @foreach ($stories as $user => $story)
-            <a href="#" class="flex flex-col items-center">
-                <div class="w-16 h-16 border-2 border-pink-500 rounded-full p-0.5">
-                    <img src="{{ asset('storage/' . $story->first()->user->profile_image) }}" alt="{{ $user }}" class="w-full h-full rounded-full object-cover">
-                </div>
-                <span class="text-xs mt-1">{{ $user }}</span>
-            </a>
-        @endforeach
-    </div>
-
-    <!-- Botón flotante para crear publicación -->
-<div class="fixed bottom-6 right-6">
-    <a href="{{ route('posts.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-4 shadow-lg flex items-center justify-center w-12 h-12">
-        ➕
-    </a>
-</div>
-
-       <!-- Publicaciones -->
-    @foreach ($posts as $post)
-        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-            <div class="p-4 flex items-center">
-                <img src="{{ asset('storage/' . $post->user->profile_image) }}" alt="{{ $post->user->username }}" class="w-10 h-10 rounded-full mr-3">
-                <a href="{{ route('profile.show', $post->user->username) }}" class="font-bold text-sm">{{ $post->user->username }}</a>
-            </div>
-            <img src="{{ asset('storage/' . $post->image_path) }}" alt="Publicación" class="w-full">
-            @if($post->caption)
-                <div class="p-4">
-                    <p class="text-sm">
-                        <strong>{{ $post->user->username }}</strong>
-                        {!! preg_replace('/@([a-zA-Z0-9_]+)/', '<a href="/profile/$1" class="text-blue-500">@$1</a>', e($post->caption)) !!}
-                    </p>
-                </div>
-            @endif
-            <div class="px-4 py-2">
-                <a href="{{ route('posts.show', $post) }}" class="text-sm text-gray-500">
-                    Ver comentarios ({{ $post->comments->count() }})
-                </a>
-            </div>
+  {{-- Historias destacadas --}}
+  <section class="flex space-x-4 overflow-x-auto mb-8 px-4">
+    @foreach ($stories as $userId => $userStories)
+      @php $user = $userStories->first()->user @endphp
+      <a href="#" class="flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full border-4 border-autumn p-0.5">
+          <img
+            src="{{ asset('storage/' . $user->profile_image) }}"
+            alt="{{ $user->username }}"
+            class="w-full h-full rounded-full object-cover"
+          >
         </div>
+        <span class="mt-1 text-xs text-black">{{ $user->username }}</span>
+      </a>
     @endforeach
-    
-    <!-- Sugerencias -->
-    <div class="bg-white p-4 rounded-lg shadow">
-        <h3 class="font-bold mb-3">Sugerencias para ti</h3>
-        @foreach ($suggestions as $suggestedUser)
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center">
-                    <img src="{{ $suggestedUser->profile_image ? asset('storage/' . $suggestedUser->profile_image) : asset('images/default-avatar.png') }}" alt="{{ $suggestedUser->username }}" class="w-10 h-10 rounded-full mr-3">
-                    <div>
-                        <p class="font-semibold text-sm">{{ $suggestedUser->username }}</p>
-                        <p class="text-xs text-gray-500">{{ $suggestedUser->followers_count }} seguidores</p>
-                    </div>
-                </div>
-                <a href="{{ route('profile.show', $suggestedUser->username) }}" class="text-blue-500 text-xs">Ver perfil</a>
-            </div>
-        @endforeach
-    </div>
+  </section>
+
+  {{-- Listado de publicaciones --}}
+  <div class="space-y-6 px-4">
+    @foreach ($posts as $post)
+      <article class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <header class="flex items-center p-4 space-x-3">
+          <img
+            src="{{ asset('storage/' . $post->user->profile_image) }}"
+            alt="{{ $post->user->username }}"
+            class="w-10 h-10 rounded-full object-cover"
+          >
+          <a
+            href="{{ route('profile.show', $post->user->username) }}"
+            class="text-sm font-medium text-black hover:text-autumn transition"
+          >
+            {{ $post->user->username }}
+          </a>
+        </header>
+
+        <img
+          src="{{ asset('storage/' . $post->image_path) }}"
+          alt="Publicación"
+          class="w-full object-cover"
+        >
+
+        @if ($post->caption)
+          <div class="p-4 border-t border-gray-200">
+            <p class="text-sm text-black leading-relaxed">
+              <span class="font-semibold">{{ $post->user->username }}</span>
+              {!! preg_replace(
+                    '/@([a-zA-Z0-9_]+)/',
+                    '<a href="/profile/$1" class="text-autumn hover:underline">@$1</a>',
+                    e($post->caption)
+                  ) !!}
+            </p>
+          </div>
+        @endif
+
+        <footer class="flex justify-end px-4 py-2 border-t border-gray-100">
+          <a
+            href="{{ route('posts.show', $post) }}"
+            class="text-xs text-black hover:text-autumn transition"
+          >
+            Ver comentarios ({{ $post->comments->count() }})
+          </a>
+        </footer>
+      </article>
+    @endforeach
+  </div>
+
+  {{-- Botón flotante: Crear publicación --}}
+  <a
+    href="{{ route('posts.create') }}"
+    class="fixed bottom-6 right-6 z-50 bg-autumn text-white w-14 h-14 rounded-full
+           flex items-center justify-center shadow-md hover:bg-autumn-dark
+           transition-colors duration-200"
+  >
+    ➕
+  </a>
+
+  {{-- Sugerencias --}}
+  <section class="mt-8 bg-white rounded-lg shadow px-4 py-6 mx-4">
+    <h3 class="text-lg font-medium text-black mb-4">Sugerencias para ti</h3>
+
+    @foreach ($suggestions as $user)
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-3">
+          <img
+            src="{{ $user->profile_image
+                  ? asset('storage/' . $user->profile_image)
+                  : asset('images/default-avatar.png') }}"
+            alt="{{ $user->username }}"
+            class="w-10 h-10 rounded-full object-cover"
+          >
+          <div>
+            <p class="text-sm font-medium text-black">{{ $user->username }}</p>
+            <p class="text-xs text-gray-500">{{ $user->followers_count }} seguidores</p>
+          </div>
+        </div>
+        <a
+          href="{{ route('profile.show', $user->username) }}"
+          class="text-xs text-autumn hover:underline transition"
+        >
+          Ver perfil
+        </a>
+      </div>
+    @endforeach
+  </section>
 @endsection

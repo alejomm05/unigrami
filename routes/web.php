@@ -46,20 +46,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Publicaciones
     Route::prefix('posts')->group(function () {
+        // Crear nueva publicación
+        Route::get('/create', function () {
+            return view('posts.create');
+        })->name('posts.create');
+
+        // Almacenar publicación
         Route::post('/', [PostController::class, 'store'])->name('posts.store');
+
+        // Ver publicación
         Route::get('/{post}', [PostController::class, 'show'])->name('posts.show');
+
+        // Eliminar publicación
         Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-
-            // Publicaciones
-Route::get('/posts/create', function () {
-    return view('posts.create');
-})->name('posts.create')->middleware(['auth', 'verified']);
-
-Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-
-        
     });
-
 
     // Comentarios
     Route::post('/comments', [CommentController::class, 'store'])
@@ -67,10 +67,14 @@ Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
 
     // Historias
     Route::prefix('stories')->group(function () {
-        Route::get('/', [StoryController::class, 'index'])->name('stories.index');
+        // Crear historia
         Route::get('/create', [StoryController::class, 'create'])->name('stories.create');
         Route::post('/store', [StoryController::class, 'store'])->name('stories.store');
+
+        // Ver historia (registro de vista)
         Route::get('/{story}/view', [StoryController::class, 'view'])->name('stories.view');
+
+        // Reaccionar con emoji
         Route::post('/{story}/react', [StoryController::class, 'react'])->name('stories.react');
     });
 

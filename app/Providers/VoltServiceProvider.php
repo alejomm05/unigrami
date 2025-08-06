@@ -25,8 +25,4 @@ class VoltServiceProvider extends ServiceProvider
             resource_path('views/pages'),
         ]);
     }
-
-    protected $policies = [
-    \App\Models\Post::class => \App\Policies\PostPolicy::class,
-];
 }

@@ -2,12 +2,27 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
+
+
+module.exports = {
+  darkMode: 'class', // Permite cambiar el tema manualmente
+  content: [
+    './app/Views/**/*.php',
+    './resources/**/*.{php,js,vue}',
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
 export default {
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
+
+    
 
     theme: {
         extend: {

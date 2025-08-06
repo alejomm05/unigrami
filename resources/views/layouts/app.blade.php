@@ -13,12 +13,30 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+      <!-- Alpine.js CDN -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        .logo-text {
+            font-family: 'Figtree', sans-serif;
+            font-weight: 600;
+            color: #FF8C42;
+        }
+        .dark .logo-text { @apply text-orange-400; }
+        .dark { background-color: #121212; color: #e0e0e0; }
+        .dark .bg-white { @apply bg-gray-900; }
+        .dark .text-gray-900 { @apply text-gray-100; }
+        .dark .text-gray-700 { @apply text-gray-300; }
+        .dark .border-gray-200 { @apply border-gray-700; }
+        .dark .hover\:bg-gray-100:hover { @apply hover:bg-gray-800; }
+    </style>
 </head>
-<body class="font-sans antialiased bg-gray-100 text-gray-900">
+<body class="font-sans antialiased bg-gray-50 text-gray-900 transition-colors duration-300">
     <div class="min-h-screen flex">
         <!-- Barra lateral -->
         <aside class="w-64 bg-white border-r border-gray-200">
-            <livewire:layout.navigation />
+            <livewire:welcome.navigation />
         </aside>
 
         <!-- Sección principal -->

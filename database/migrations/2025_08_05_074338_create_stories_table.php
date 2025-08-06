@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::create('stories', function (Blueprint $table) {
+    Schema::create('stories', function (Blueprint $table) {
     $table->id();
     $table->foreignId('user_id')->constrained()->onDelete('cascade');
     $table->string('media_path');
-    $table->string('type'); // 'image' o 'video'
-    $table->text('caption')->nullable();
-    $table->integer('duration')->nullable(); // en segundos
-    $table->dateTime('expires_at'); // now()->addDay()
+    $table->enum('type', ['photo','video']);
+    $table->string('caption')->nullable();
+    $table->timestamp('expires_at');
+    $table->unsignedSmallInteger('duration')->nullable(); // en segundos
     $table->timestamps();
 });
     }
