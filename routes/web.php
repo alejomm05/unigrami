@@ -80,11 +80,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Mensajes directos
     Route::prefix('messages')->group(function () {
+        // Lista de conversaciones
         Route::get('/', [MessageController::class, 'index'])->name('messages.index');
-        Route::get('/conversation/{username}', [MessageController::class, 'conversation'])->name('messages.conversation');
-        Route::post('/send', [MessageController::class, 'send'])->name('messages.send');
-        Route::post('/forward/{message}', [MessageController::class, 'forward'])->name('messages.forward');
+
+        // Conversación con un usuario por username
+        Route::get('/{username}', [MessageController::class, 'conversation'])
+            ->name('messages.conversation');
+
+        // Enviar mensaje a un usuario por username
+        Route::post('/{username}/send', [MessageController::class, 'send'])
+            ->name('messages.send');
+
+        // Reenviar un mensaje específico
+        Route::post('/forward/{message}', [MessageController::class, 'forward'])
+            ->name('messages.forward');
     });
+
+    // Iniciar nueva conversación
+    Route::get('/messages/start', [MessageController::class, 'startConversation'])
+        ->name('messages.start');
 
     // Notificaciones
     Route::get('/notifications', [NotificationController::class, 'index'])

@@ -73,15 +73,7 @@
     @endforeach
   </div>
 
-  {{-- Botón flotante: Crear publicación --}}
-  <a
-    href="{{ route('posts.create') }}"
-    class="fixed bottom-6 right-6 z-50 bg-autumn text-white w-14 h-14 rounded-full
-           flex items-center justify-center shadow-md hover:bg-autumn-dark
-           transition-colors duration-200"
-  >
-    ➕
-  </a>
+
 
   {{-- Sugerencias --}}
   <section class="mt-8 bg-white rounded-lg shadow px-4 py-6 mx-4">

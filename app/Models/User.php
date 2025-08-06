@@ -54,15 +54,30 @@ class User extends Authenticatable
         return $this->follows()->where('followed_id', $user->id)->exists();
     }
 
-    public function sentMessages()
+       public function isFollowedBy($user)
     {
-        return $this->hasMany(Message::class, 'sender_id');
+        return $this->followers()->where('follower_id', $user->id)->exists();
     }
 
-    public function receivedMessages()
-    {
-        return $this->belongsToMany(Message::class, 'message_user', 'recipient_id', 'message_id');
-    }
+   // app/Models/User.php
+public function sentMessages()
+{
+    return $this->hasMany(Message::class, 'sender_id');
+}
+
+public function receivedMessages()
+{
+    return $this->belongsToMany(Message::class, 'message_user', 'recipient_id', 'message_id')
+                ->withPivot('read')
+                ->withTimestamps();
+}
+
+
+// Verifica si un usuario puede recibir mensajes de otro
+public function canReceiveFrom(User $sender)
+{
+    return $this->followers()->where('follower_id', $sender->id)->exists();
+}
 
     public function mentions()
     {
@@ -88,4 +103,6 @@ class User extends Authenticatable
 {
     return $this->hasMany(Comment::class);
 }
+
+
 }
