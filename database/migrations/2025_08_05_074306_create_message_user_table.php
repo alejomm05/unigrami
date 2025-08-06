@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('message_user', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('message_id')->constrained()->onDelete('cascade');
-    $table->foreignId('recipient_id')->constrained('users')->onDelete('cascade');
+    $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+    $table->text('content')->nullable();
+    $table->string('image_path')->nullable();
     $table->timestamps();
-    $table->unique(['message_id', 'recipient_id']);
 });
 
     }
@@ -26,6 +26,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('message_user');
+    
+Schema::create('message_user', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('message_id')->constrained()->onDelete('cascade');
+    $table->foreignId('recipient_id')->constrained('users')->onDelete('cascade');
+    $table->boolean('read')->default(false);
+    $table->timestamps();
+});
     }
 };
